@@ -2,7 +2,13 @@ FROM apache/superset:latest
 
 USER root
 
-RUN pip install mysqlclient sqlalchemy-dynamodb boto3 sasl thrift_sasl sqlalchemy sqlalchemy-orm
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libmysqlclient-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install mysqlclient
 
 ENV ADMIN_USERNAME $ADMIN_USERNAME
 ENV ADMIN_EMAIL $ADMIN_EMAIL
