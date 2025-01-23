@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y \
     unixodbc \
     unixodbc-dev \
     libpq-dev \
+    gcc \
+    g++ \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
