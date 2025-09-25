@@ -1,14 +1,11 @@
 #!/bin/bash
 set -e
 
-# Обновляем pip и ставим psycopg2 (ещё раз, на всякий)
-pip install --upgrade pip psycopg2-binary
-
-# Применяем миграции и инициализацию
+# Виртуальное окружение уже используется Superset, psycopg2-binary установлен
 superset db upgrade
 superset init
 
-# Создаем админа, если нужно
+# Создаем админа
 superset fab create-admin \
     --username "$ADMIN_USERNAME" \
     --firstname Superset \
@@ -16,5 +13,5 @@ superset fab create-admin \
     --email "$ADMIN_EMAIL" \
     --password "$ADMIN_PASSWORD"
 
-# Запускаем стандартный сервер Superset
+# Запуск Superset
 exec /usr/bin/run-server.sh
