@@ -2,6 +2,7 @@ FROM apache/superset:latest
 
 USER root
 
+# Устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libmariadb-dev \
@@ -20,20 +21,13 @@ ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
 ENV SECRET_KEY=${SECRET_KEY}
 ENV DATABASE_URL=${DATABASE_URL}
 
-COPY /config/superset_init.sh ./superset_init.sh
-RUN chmod +x ./superset_init.sh
+# Копируем скрипт и конфиг Superset
+COPY /config/superset_init.sh /app/superset_init.sh
+RUN chmod +x /app/superset_init.sh
 
-COPY /config/superset_config.py /app/
+COPY /config/superset_config.py /app/superset_config.py
 ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
 
 USER superset
 
-# Устанавливаем psycopg2 и другие драйверы в виртуальное окружение Superset
-RUN /app/.venv/bin/pip install --no-cache-dir \
-    psycopg2-binary \
-    pymongo \
-    pymssql \
-    pyodbc \
-    mysqlclient
-
-ENTRYPOINT ["./superset_init.sh"]
+ENTRYPOINT ["/app/superset_init.sh"]
