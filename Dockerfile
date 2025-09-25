@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Ставим Python-библиотеки в виртуальное окружение Superset
-RUN /app/.venv/bin/pip install --upgrade pip psycopg2-binary
+RUN pip install --upgrade pip psycopg2-binary
 
 # Копируем и настраиваем Superset
 COPY config/superset_init.sh ./superset_init.sh
