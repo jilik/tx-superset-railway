@@ -1,6 +1,7 @@
 #!/bin/bash
+set -e
 
-# Создание админа
+# Создаём администратора
 superset fab create-admin \
     --username "$ADMIN_USERNAME" \
     --firstname Superset \
@@ -8,11 +9,11 @@ superset fab create-admin \
     --email "$ADMIN_EMAIL" \
     --password "$ADMIN_PASSWORD"
 
-# Обновление базы данных Superset
+# Обновляем базу данных Superset
 superset db upgrade
 
-# Настройка ролей и прав
+# Инициализация ролей и прав
 superset init
 
 # Запуск сервера
-/bin/sh -c /usr/bin/run-server.sh
+exec superset run -p 8088 --with-threads --reload --debugger

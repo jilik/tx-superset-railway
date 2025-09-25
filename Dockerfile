@@ -2,35 +2,33 @@ FROM apache/superset:latest
 
 USER root
 
-# Устанавливаем зависимости для MySQL и других драйверов
+# Системные зависимости для PostgreSQL и MySQL драйверов
 RUN apt-get update && apt-get install -y \
     build-essential \
+    libpq-dev \
     default-libmysqlclient-dev \
-    libssl-dev \
-    unixodbc-dev \
-    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Обновляем pip и ставим Python-библиотеки в виртуальное окружение Superset
+# Установка Python-библиотек в виртуальное окружение Superset
 RUN . /app/.venv/bin/activate && pip install --upgrade pip && pip install \
-    pymysql \
-    pymongo \
-    pymssql \
-    pyodbc
+    psycopg2-binary \
+    pymysql
 
-# Копируем и настраиваем Superset
-COPY /config/superset_init.sh ./superset_init.sh
-RUN chmod +x ./superset_init.sh
-
-COPY /config/superset_config.py /app/
-ENV SUPERSET_CONFIG_PATH /app/superset_config.py
-
-# Переменные админа
+# Переменные окружения для админа
 ENV ADMIN_USERNAME=$ADMIN_USERNAME
 ENV ADMIN_EMAIL=$ADMIN_EMAIL
 ENV ADMIN_PASSWORD=$ADMIN_PASSWORD
+ENV DATABASE_URL=$DATABASE_URL
 ENV SECRET_KEY=$SECRET_KEY
+
+# Копируем init скрипт и делаем его исполняемым
+COPY ./config/superset_init.sh /app/superset_init.sh
+RUN chmod +x /app/superset_init.sh
+
+# Копируем Superset конфиг
+COPY ./config/superset_config.py /app/superset_config.py
+ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
 
 USER superset
 
-ENTRYPOINT [ "./superset_init.sh" ]
+ENTRYPOINT [ "/app/superset_init.sh" ]
