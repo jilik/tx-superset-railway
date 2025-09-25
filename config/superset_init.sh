@@ -1,13 +1,22 @@
 #!/bin/bash
+set -e
 
-# create Admin user, you can read these values from env or anywhere else possible
-superset fab create-admin --username "$ADMIN_USERNAME" --firstname Superset --lastname Admin --email "$ADMIN_EMAIL" --password "$ADMIN_PASSWORD"
+echo "Starting Superset initialization..."
 
-# Upgrading Superset metastore
+# Обновляем мета-базу (PostgreSQL)
 superset db upgrade
 
-# setup roles and permissions
-superset superset init 
+# Создаём администратора
+export FLASK_APP=superset
+superset fab create-admin \
+    --username "$ADMIN_USERNAME" \
+    --firstname "Superset" \
+    --lastname "Admin" \
+    --email "$ADMIN_EMAIL" \
+    --password "$ADMIN_PASSWORD"
 
-# Starting server
-/bin/sh -c /usr/bin/run-server.sh
+# Инициализация ролей и начальных данных
+superset init
+
+# Запуск Superset через стандартный run-server.sh
+exec /bin/sh -c /usr/bin/run-server.sh
