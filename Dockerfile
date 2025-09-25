@@ -13,24 +13,27 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install \
+# Устанавливаем драйверы
+RUN pip install --no-cache-dir \
     psycopg2-binary \
     pymongo \
     pymssql \
     pyodbc \
     mysqlclient
 
-ENV ADMIN_USERNAME $ADMIN_USERNAME
-ENV ADMIN_EMAIL $ADMIN_EMAIL
-ENV ADMIN_PASSWORD $ADMIN_PASSWORD
+# Передаем переменные окружения пользователю superset
+ENV ADMIN_USERNAME=${ADMIN_USERNAME}
+ENV ADMIN_EMAIL=${ADMIN_EMAIL}
+ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
+ENV SECRET_KEY=${SECRET_KEY}
+ENV DATABASE_URL=${DATABASE_URL}
 
 COPY /config/superset_init.sh ./superset_init.sh
 RUN chmod +x ./superset_init.sh
 
 COPY /config/superset_config.py /app/
-ENV SUPERSET_CONFIG_PATH /app/superset_config.py
-ENV SECRET_KEY $SECRET_KEY
+ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
 
 USER superset
 
-ENTRYPOINT [ "./superset_init.sh" ]
+ENTRYPOINT ["./superset_init.sh"]
