@@ -3,18 +3,17 @@ set -e
 
 echo "Starting Superset initialization..."
 
-# Устанавливаем зависимости глобально (для пользователя superset)
-pip install --no-cache-dir \
-    psycopg2-binary \
-    pymongo \
-    pymssql \
-    pyodbc \
-    mysqlclient
+# Если venv ещё нет — создаём его
+if [ ! -d "/app/.venv" ]; then
+    python3 -m venv /app/.venv
+fi
 
-# Инициализация базы данных
+# Устанавливаем зависимости внутри venv
+/app/.venv/bin/pip install --upgrade pip
+/app/.venv/bin/pip install psycopg2-binary pymongo pymssql pyodbc mysqlclient
+
+# Инициализация базы и создание админа
 superset db upgrade
-
-# Создание админа
 export FLASK_APP=superset
 superset fab create-admin \
     --username "$ADMIN_USERNAME" \
@@ -23,7 +22,6 @@ superset fab create-admin \
     --email "$ADMIN_EMAIL" \
     --password "$ADMIN_PASSWORD" || true
 
-# Инициализация ролей и старт
 superset init
 
 # Запуск сервера
