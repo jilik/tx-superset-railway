@@ -17,5 +17,8 @@ fi
 # Настройка ролей и прав
 superset init
 
-# Запуск Superset
-exec superset run -p 8088 --with-threads --reload --debugger
+# Определяем порт, который задаёт Railway (по умолчанию 8088)
+PORT="${PORT:-8088}"
+
+# Запуск Superset на 0.0.0.0 для доступности извне
+exec superset run -h 0.0.0.0 -p "$PORT" --with-threads --reload --debugger
