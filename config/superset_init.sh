@@ -3,21 +3,28 @@ set -e
 
 echo "Starting Superset initialization..."
 
-export FLASK_APP=superset
+# Устанавливаем драйверы прямо в venv Superset
+/app/.venv/bin/pip install --no-cache-dir \
+    psycopg2-binary \
+    pymongo \
+    pymssql \
+    pyodbc \
+    mysqlclient
 
-# Обновляем мета-базу
+# Инициализируем базу данных
 superset db upgrade
 
-# Создаём администратора
+# Создаём админа, если его ещё нет
+export FLASK_APP=superset
 superset fab create-admin \
     --username "$ADMIN_USERNAME" \
     --firstname "Superset" \
     --lastname "Admin" \
     --email "$ADMIN_EMAIL" \
-    --password "$ADMIN_PASSWORD"
+    --password "$ADMIN_PASSWORD" || true
 
-# Инициализация ролей и начальных данных
+# Инициализируем роли и начальные данные
 superset init
 
-# Запуск Superset через стандартный run-server.sh
-exec /bin/sh -c /usr/bin/run-server.sh
+# Запуск Superset
+exec /usr/bin/run-server.sh
