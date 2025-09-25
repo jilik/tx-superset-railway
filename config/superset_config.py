@@ -7,11 +7,10 @@ FEATURE_FLAGS = {
 PREVENT_UNSAFE_DB_CONNECTIONS = False
 ENABLE_PROXY_FIX = True
 
-# Секретный ключ
 SECRET_KEY = os.environ.get("SECRET_KEY", "fallback_secret")
 
-# Подключение к мета-базе PostgreSQL
+# Подключение к мета-базе через переменную окружения DATABASE_URL
 SQLALCHEMY_DATABASE_URI = os.environ.get(
     "DATABASE_URL",
-    "sqlite:////app/superset.db"  # fallback для локальной разработки
+    "sqlite:////app/superset.db"
 )

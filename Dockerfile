@@ -2,7 +2,6 @@ FROM apache/superset:latest
 
 USER root
 
-# Устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libmariadb-dev \
@@ -21,13 +20,20 @@ ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
 ENV SECRET_KEY=${SECRET_KEY}
 ENV DATABASE_URL=${DATABASE_URL}
 
-# Копируем скрипт и конфиг Superset
-COPY /config/superset_init.sh /app/superset_init.sh
-RUN chmod +x /app/superset_init.sh
-
-COPY /config/superset_config.py /app/superset_config.py
+# Копируем скрипты и конфиги
+COPY config/superset_init.sh /superset_init.sh
+COPY config/superset_config.py /app/superset_config.py
+RUN chmod +x /superset_init.sh
 ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
 
 USER superset
 
-ENTRYPOINT ["/app/superset_init.sh"]
+# Устанавливаем драйверы прямо в venv пользователя superset
+RUN /usr/bin/python3 -m pip install --user --no-cache-dir \
+    psycopg2-binary \
+    pymongo \
+    pymssql \
+    pyodbc \
+    mysqlclient
+
+ENTRYPOINT ["/superset_init.sh"]

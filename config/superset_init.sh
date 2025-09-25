@@ -3,18 +3,12 @@ set -e
 
 echo "Starting Superset initialization..."
 
-# Устанавливаем драйверы Python
-pip install --no-cache-dir \
-    psycopg2-binary \
-    pymongo \
-    pymssql \
-    pyodbc \
-    mysqlclient
+export FLASK_APP=superset
 
-# Обновляем мета-базу (PostgreSQL)
+# Обновляем мета-базу
 superset db upgrade
 
-# Создаем администратора
+# Создаём администратора
 superset fab create-admin \
     --username "$ADMIN_USERNAME" \
     --firstname "Superset" \
@@ -25,5 +19,5 @@ superset fab create-admin \
 # Инициализация ролей и начальных данных
 superset init
 
-# Запуск Superset
+# Запуск Superset через стандартный run-server.sh
 exec /bin/sh -c /usr/bin/run-server.sh
