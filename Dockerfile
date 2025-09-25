@@ -8,10 +8,10 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка Python-библиотек в виртуальное окружение Superset
-RUN /app/.venv/bin/pip install --upgrade pip psycopg2-binary
+# Установка psycopg2-binary в глобальное окружение Superset
+RUN pip install --upgrade pip psycopg2-binary
 
-# Переменные окружения для админа
+# Переменные окружения для админа (можно передавать при запуске)
 ENV ADMIN_USERNAME=$ADMIN_USERNAME
 ENV ADMIN_EMAIL=$ADMIN_EMAIL
 ENV ADMIN_PASSWORD=$ADMIN_PASSWORD
@@ -27,4 +27,4 @@ ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
 
 USER superset
 
-ENTRYPOINT [ "/app/superset_init.sh" ]
+ENTRYPOINT ["/app/superset_init.sh"]

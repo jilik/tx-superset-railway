@@ -7,10 +7,9 @@ FEATURE_FLAGS = {
 PREVENT_UNSAFE_DB_CONNECTIONS = False
 ENABLE_PROXY_FIX = True
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", "supersecret")
 
-# URL вашей базы данных PostgreSQL
-# На Railway переменная DATABASE_URL создается автоматически
+# Используем DATABASE_URL из окружения или локальный PostgreSQL
 SQLALCHEMY_DATABASE_URI = os.environ.get(
     "DATABASE_URL",
     "postgresql+psycopg2://postgres:password@localhost:5432/superset"
