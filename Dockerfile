@@ -135,4 +135,4 @@ USER superset
 # Экспозим порт
 EXPOSE 8088
 
-ENTRYPOINT ["/superset_init.sh"]
+ENTRYPOINT ["./config/superset_init.sh"]
