@@ -2,17 +2,14 @@ FROM apache/superset:latest
 
 USER root
 
-# Устанавливаем зависимости для MySQL и PostgreSQL
+# Устанавливаем зависимости для PostgreSQL
 RUN apt-get update && apt-get install -y \
     build-essential \
-    default-libmysqlclient-dev \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Ставим Python-библиотеки
-RUN pip install --upgrade pip && pip install \
-    psycopg2-binary \
-    mysqlclient
+RUN pip install --upgrade pip && pip install psycopg2-binary
 
 # Копируем и настраиваем Superset
 COPY config/superset_init.sh ./superset_init.sh
