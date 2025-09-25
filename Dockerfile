@@ -29,5 +29,4 @@ ENV DATABASE_URL=${DATABASE_URL}
 
 USER superset
 
-# ENTRYPOINT запускаем через наш скрипт
 ENTRYPOINT ["/superset_init.sh"]

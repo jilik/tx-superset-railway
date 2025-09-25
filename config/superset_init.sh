@@ -3,13 +3,16 @@ set -e
 
 echo "Starting Superset initialization..."
 
-# Устанавливаем драйверы прямо в venv Superset
-/app/.venv/bin/pip install --no-cache-dir \
+# Устанавливаем драйверы глобально для пользователя superset
+pip install --user --no-cache-dir \
     psycopg2-binary \
     pymongo \
     pymssql \
     pyodbc \
     mysqlclient
+
+# Добавляем путь к user-site-packages в PATH
+export PATH=$HOME/.local/bin:$PATH
 
 # Инициализируем базу данных
 superset db upgrade
