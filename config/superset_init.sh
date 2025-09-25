@@ -1,20 +1,26 @@
 #!/bin/bash
 set -e
 
-# Если venv ещё не создан, Superset создаст его
-# Устанавливаем psycopg2 в виртуальное окружение
-/app/.venv/bin/pip install --upgrade pip psycopg2-binary
+# --- Создаём psycopg2 в виртуальном окружении Superset ---
+if [ -f "/app/.venv/bin/pip" ]; then
+    echo "Installing psycopg2-binary in Superset venv..."
+    /app/.venv/bin/pip install --upgrade pip psycopg2-binary
+else
+    echo "Virtualenv not found! Exiting..."
+    exit 1
+fi
 
-# Миграции и инициализация
+# --- Миграции базы и инициализация ---
 superset db upgrade
 superset init
 
-# Создаём админа
+# --- Создание админа ---
 superset fab create-admin \
-  --username "$ADMIN_USERNAME" \
-  --firstname Superset \
-  --lastname Admin \
-  --email "$ADMIN_EMAIL" \
-  --password "$ADMIN_PASSWORD"
+    --username "$ADMIN_USERNAME" \
+    --firstname Superset \
+    --lastname Admin \
+    --email "$ADMIN_EMAIL" \
+    --password "$ADMIN_PASSWORD"
 
+# --- Запуск сервера ---
 exec /usr/bin/run-server.sh
