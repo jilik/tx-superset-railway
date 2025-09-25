@@ -13,14 +13,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем драйверы
-RUN pip install --no-cache-dir \
-    psycopg2-binary \
-    pymongo \
-    pymssql \
-    pyodbc \
-    mysqlclient
-
 # Передаем переменные окружения пользователю superset
 ENV ADMIN_USERNAME=${ADMIN_USERNAME}
 ENV ADMIN_EMAIL=${ADMIN_EMAIL}
@@ -35,5 +27,13 @@ COPY /config/superset_config.py /app/
 ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
 
 USER superset
+
+# Устанавливаем psycopg2 и другие драйверы в виртуальное окружение Superset
+RUN /app/.venv/bin/pip install --no-cache-dir \
+    psycopg2-binary \
+    pymongo \
+    pymssql \
+    pyodbc \
+    mysqlclient
 
 ENTRYPOINT ["./superset_init.sh"]
