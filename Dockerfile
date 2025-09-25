@@ -2,8 +2,8 @@ FROM apache/superset:latest
 
 USER root
 
-# Устанавливаем зависимости
 RUN apt-get update && apt-get install -y \
+    pkg-config \          # <- обязательно
     libmariadb-dev \
     unixodbc \
     unixodbc-dev \
@@ -12,8 +12,11 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Python пакеты для подключения к базам
-RUN pip install --upgrade pip && pip install \
+# pip лучше обновить отдельно
+RUN pip install --upgrade pip
+
+# Python пакеты для баз данных
+RUN pip install \
     mysqlclient \
     pymongo \
     pymssql \
