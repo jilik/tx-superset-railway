@@ -8,14 +8,14 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка psycopg2-binary в глобальное окружение Superset
+# Установка psycopg2-бinary глобально (Superset его увидит)
 RUN pip install --upgrade pip psycopg2-binary
 
-# Переменные окружения для админа (можно передавать при запуске)
-ENV ADMIN_USERNAME=$ADMIN_USERNAME
-ENV ADMIN_EMAIL=$ADMIN_EMAIL
-ENV ADMIN_PASSWORD=$ADMIN_PASSWORD
-ENV SECRET_KEY=$SECRET_KEY
+# Переменные окружения для админа
+ENV ADMIN_USERNAME=admin
+ENV ADMIN_EMAIL=admin@example.com
+ENV ADMIN_PASSWORD=admin
+ENV SECRET_KEY=mysecret
 
 # Копируем init скрипт и делаем его исполняемым
 COPY ./config/superset_init.sh /app/superset_init.sh

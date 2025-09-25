@@ -1,21 +1,20 @@
 #!/bin/bash
 set -e
 
-# Создание админа, если переменные заданы
-if [ -n "$ADMIN_USERNAME" ] && [ -n "$ADMIN_PASSWORD" ] && [ -n "$ADMIN_EMAIL" ]; then
-    superset fab create-admin \
-        --username "$ADMIN_USERNAME" \
-        --firstname Superset \
-        --lastname Admin \
-        --email "$ADMIN_EMAIL" \
-        --password "$ADMIN_PASSWORD"
-fi
+# Обновляем pip и ставим psycopg2 (ещё раз, на всякий)
+pip install --upgrade pip psycopg2-binary
 
-# Обновление базы данных Superset
+# Применяем миграции и инициализацию
 superset db upgrade
-
-# Настройка ролей и прав
 superset init
 
-# Запуск сервера
-exec superset run -p 8088 --with-threads --reload --debugger
+# Создаем админа, если нужно
+superset fab create-admin \
+    --username "$ADMIN_USERNAME" \
+    --firstname Superset \
+    --lastname Admin \
+    --email "$ADMIN_EMAIL" \
+    --password "$ADMIN_PASSWORD"
+
+# Запускаем стандартный сервер Superset
+exec /usr/bin/run-server.sh
