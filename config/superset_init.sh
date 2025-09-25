@@ -3,20 +3,8 @@ set -e
 
 echo "Starting Superset initialization..."
 
-# Проверяем, где находится venv
-if [ -d "/app/.venv" ]; then
-    PIP="/app/.venv/bin/pip"
-elif [ -d "/app/venv" ]; then
-    PIP="/app/venv/bin/pip"
-else
-    echo "Virtual environment not found, exiting"
-    exit 1
-fi
-
-echo "Using pip at $PIP"
-
-# Устанавливаем драйверы прямо в venv
-$PIP install --no-cache-dir \
+# Устанавливаем зависимости глобально (для пользователя superset)
+pip install --no-cache-dir \
     psycopg2-binary \
     pymongo \
     pymssql \
@@ -39,4 +27,4 @@ superset fab create-admin \
 superset init
 
 # Запуск сервера
-exec /usr/bin/run-server.sh
+exec superset run -p 8088 --host 0.0.0.0
