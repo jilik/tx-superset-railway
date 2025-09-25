@@ -3,21 +3,30 @@ set -e
 
 echo "Starting Superset initialization..."
 
-# Устанавливаем драйверы глобально для пользователя superset
-pip install --user --no-cache-dir \
+# Проверяем, где находится venv
+if [ -d "/app/.venv" ]; then
+    PIP="/app/.venv/bin/pip"
+elif [ -d "/app/venv" ]; then
+    PIP="/app/venv/bin/pip"
+else
+    echo "Virtual environment not found, exiting"
+    exit 1
+fi
+
+echo "Using pip at $PIP"
+
+# Устанавливаем драйверы прямо в venv
+$PIP install --no-cache-dir \
     psycopg2-binary \
     pymongo \
     pymssql \
     pyodbc \
     mysqlclient
 
-# Добавляем путь к user-site-packages в PATH
-export PATH=$HOME/.local/bin:$PATH
-
-# Инициализируем базу данных
+# Инициализация базы данных
 superset db upgrade
 
-# Создаём админа, если его ещё нет
+# Создание админа
 export FLASK_APP=superset
 superset fab create-admin \
     --username "$ADMIN_USERNAME" \
@@ -26,8 +35,8 @@ superset fab create-admin \
     --email "$ADMIN_EMAIL" \
     --password "$ADMIN_PASSWORD" || true
 
-# Инициализируем роли и начальные данные
+# Инициализация ролей и старт
 superset init
 
-# Запуск Superset
+# Запуск сервера
 exec /usr/bin/run-server.sh
