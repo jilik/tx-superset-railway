@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Создаём админа
+# Создание админа
 superset fab create-admin \
-  --username "$ADMIN_USERNAME" \
-  --firstname Superset \
-  --lastname Admin \
-  --email "$ADMIN_EMAIL" \
-  --password "$ADMIN_PASSWORD"
+    --username "$ADMIN_USERNAME" \
+    --firstname Superset \
+    --lastname Admin \
+    --email "$ADMIN_EMAIL" \
+    --password "$ADMIN_PASSWORD"
 
-# Миграции
+# Обновление базы данных Superset
 superset db upgrade
 
-# Инициализация ролей и пермишнов
+# Настройка ролей и прав
 superset init
 
 # Запуск сервера

@@ -1,7 +1,6 @@
 import os
 import pymysql
-
-pymysql.install_as_MySQLdb()  # чтобы SQLAlchemy видел MySQLdb
+pymysql.install_as_MySQLdb()  # Чтобы SQLAlchemy понял MySQL через pymysql
 
 FEATURE_FLAGS = {
     "ENABLE_TEMPLATE_PROCESSING": True,
@@ -9,6 +8,11 @@ FEATURE_FLAGS = {
 
 PREVENT_UNSAFE_DB_CONNECTIONS = False
 ENABLE_PROXY_FIX = True
+
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+# URL вашей базы данных MySQL
+SQLALCHEMY_DATABASE_URI = os.environ.get(
+    "DATABASE_URL",
+    "mysql+pymysql://root:password@localhost:3306/superset"
+)
