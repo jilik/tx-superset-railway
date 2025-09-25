@@ -2,14 +2,13 @@ FROM apache/superset:latest
 
 USER root
 
-# Системные зависимости для PostgreSQL
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка psycopg2-binary в виртуальное окружение Superset
-RUN /app/.venv/bin/pip install --upgrade pip psycopg2-binary
+# Устанавливаем в глобальный Python
+RUN pip install --upgrade pip psycopg2-binar
 
 # Переменные окружения для админа
 ENV ADMIN_USERNAME=admin
