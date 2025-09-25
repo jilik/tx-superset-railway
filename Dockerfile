@@ -1,4 +1,4 @@
-FROM apache/superset:latest
+FROM apache/superset:latest-dev
 
 USER root
 
@@ -6,24 +6,27 @@ USER root
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    python3-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Переменные окружения для админа и секретов
-ENV ADMIN_USERNAME=${ADMIN_USERNAME}
-ENV ADMIN_EMAIL=${ADMIN_EMAIL}
-ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
-ENV SECRET_KEY=${SECRET_KEY}
-ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
+# Установка psycopg2-binary в виртуальное окружение Superset
+RUN /app/.venv/bin/pip install --upgrade pip psycopg2-binary
+
+# Переменные окружения для админа
+ENV ADMIN_USERNAME=$ADMIN_USERNAME
+ENV ADMIN_EMAIL=$ADMIN_EMAIL
+ENV ADMIN_PASSWORD=$ADMIN_PASSWORD
+ENV SECRET_KEY=$SECRET_KEY
 
 # Копируем init скрипт и делаем его исполняемым
 COPY ./config/superset_init.sh /app/superset_init.sh
 RUN chmod +x /app/superset_init.sh
 
-# Копируем конфиг Superset
+# Копируем Superset конфиг
 COPY ./config/superset_config.py /app/superset_config.py
+ENV SUPERSET_CONFIG_PATH=/app/superset_config.py
 
-# Возвращаемся к пользователю Superset
 USER superset
 
-# Запуск init скрипта
 ENTRYPOINT ["/app/superset_init.sh"]
