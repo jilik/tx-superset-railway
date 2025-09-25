@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Ставим Python-библиотеки
-RUN pip install --upgrade pip && pip install psycopg2-binary
+# Ставим Python-библиотеки в виртуальное окружение Superset
+RUN . /app/.venv/bin/activate && pip install --upgrade pip && pip install psycopg2-binary
 
 # Копируем и настраиваем Superset
 COPY config/superset_init.sh ./superset_init.sh
